@@ -54,13 +54,13 @@ public class PlayerMovementScript : MonoBehaviour
     void Update()
     {
         Look();
-
+    Move();
     }
 
 
     void FixedUpdate()
     {
-        Move();
+        
     }
 
     void Move()
