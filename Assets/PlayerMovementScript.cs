@@ -14,7 +14,12 @@ public class PlayerMovementScript : MonoBehaviour
     private Camera cam;
     private Vector2 moveInput;
     private Vector2 lookInput;
-    private float verticalVelocity;
+    
+    private Vector3 velocity;
+
+    public float gravity = -9.81f;
+
+    private bool isGrounded;
     private float xRotation = 0f;
 
     private InputSystem_Actions inputActions;
@@ -54,14 +59,22 @@ public class PlayerMovementScript : MonoBehaviour
     void Update()
     {
         Look();
-    Move();
-    }
+        Move();
 
+        isGrounded = controller.isGrounded;
 
-    void FixedUpdate()
-    {
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f; // Mantém o personagem colado ao chão
+        }
         
+        
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
+
+
+
 
     void Move()
     {
