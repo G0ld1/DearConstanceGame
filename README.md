@@ -1,4 +1,5 @@
-Distance Game (name tbd)
+## Distance Game (name tbd)
+
 Distance Game is a narrative-driven exploration game about memory, regret, and the search for connection. You play as Frank, an aging artist struggling to reconnect with his wife, Constance, after years of growing apart. Explore their home, interact with meaningful objects, and shape the tone of Frank’s final letter through your choices.
 
 ## Features
