@@ -8,12 +8,13 @@ Branching Letter Mechanic: Your choices fill out sections of Frank’s letter, l
 Exploration: Wander through a detailed house, uncovering memories and secrets.
 Yarn Spinner Integration: All dialogue and narrative choices are powered by Yarn Spinner.
 Dynamic UI: Read and scroll through Frank’s letter at any time during gameplay.
-Controls
+
+## Controls
 WASD: Move
 Mouse: Look around
 E: Interact with objects
 Tab: Open/close the letter UI (pauses movement and enables cursor)
-How to Play
+## How to Play
 Explore the house and interact with highlighted objects.
 Each interaction presents Frank’s memories and lets you choose how he feels.
 Your choices are written into a letter to Constance, which you can read at any time.
