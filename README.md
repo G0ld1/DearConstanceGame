@@ -27,5 +27,5 @@ Distance Game is a narrative-driven exploration game about memory, regret, and t
 - Narrative: Filipe Rodrigues
 - Powered by: Yarn Spinner - https://yarnspinner.dev
 
-<img width="1600" height="1600" alt="IconDefault" src="https://github.com/user-attachments/assets/b5253f27-f228-4f6b-aed6-64962b0fb683" />
+<img width="160" height="160" alt="IconDefault" src="https://github.com/user-attachments/assets/b5253f27-f228-4f6b-aed6-64962b0fb683" />
 
