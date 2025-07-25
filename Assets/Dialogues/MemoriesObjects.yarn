@@ -1,0 +1,11 @@
+﻿title: bedRoomMemory
+---
+Frank: The bed is left undone again, I wonder if she would notice if I left it like this.
+Frank: *sigh*
+Frank: We basically don't even sleep together at this point...
+
+-> Remember the comfort of her hug
+    <<write_to_letter "bedroom_section" "Do you remember when we first moved in together? We had just rented a small apartment downtown, and that neighborhood was known for having high crime rates. I was embarrassed to tell you this at the time, but I fell asleep every night praying that I could keep you safe in my embrace if anything bad happened. The heat of hugging you as we both fell asleep is one I've forgotten so long ago. Along with so many other things as the years pulled us apart. But lying here now, I wonder — could we ever find our way back?">>
+-> Remember your first mistake
+    <<write_to_letter "bedroom_section" "Do you remember when we first moved in together? Both our parents pulled every string they could to find us a small apartment downtown. Our young minds somehow thought that living together was a great idea. We had no way of backing out either, neither of us could go face our parents after sacrificing so much and tell them we hadn't thought it through. That was probably the first of so many mistakes we made. I wonder if facing the truth back then would've saved us forty years of pretending.">>
+===
