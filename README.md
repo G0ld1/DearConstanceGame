@@ -22,6 +22,6 @@ The tone of your letter (hopeful or resentful) determines the game’s ending.
 
 
 ## Credits
-Design & Programming: Filipe Rodrigues
-Narrative: Filipe Rodrigues
-Powered by: Yarn Spinner
+- Design & Programming: Filipe Rodrigues
+- Narrative: Filipe Rodrigues
+- Powered by: Yarn Spinner
