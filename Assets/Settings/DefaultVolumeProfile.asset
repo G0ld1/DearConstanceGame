@@ -342,6 +342,9 @@ MonoBehaviour:
   skyOcclusionIntensityMultiplier:
     m_OverrideState: 1
     m_Value: 1
+  worldOffset:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0, z: 0}
 --- !u!114 &-1216621516061285780
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -408,6 +411,88 @@ MonoBehaviour:
   tint:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-1142398303202465935
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8752436c1c6e30f4da82236df21c18e3, type: 3}
+  m_Name: Fog
+  m_EditorClassIdentifier: 
+  active: 1
+  <displayName>k__BackingField: 
+  enabled:
+    <debugId>k__BackingField: enabled
+    m_OverrideState: 1
+    m_Value: 1
+  quality:
+    <debugId>k__BackingField: quality
+    m_OverrideState: 1
+    m_Value: 2
+  alphaMultiplier:
+    <debugId>k__BackingField: alphaMultiplier
+    m_OverrideState: 1
+    m_Value: 0.5
+  additionalLightsIntensityMultiplier:
+    <debugId>k__BackingField: additionalLightsIntensityMultiplier
+    m_OverrideState: 1
+    m_Value: 1
+  jitter:
+    <debugId>k__BackingField: jitter
+    m_OverrideState: 1
+    m_Value: 0.15
+  downsample:
+    <debugId>k__BackingField: downsample
+    m_OverrideState: 1
+    m_Value: 2
+  steps:
+    <debugId>k__BackingField: steps
+    m_OverrideState: 1
+    m_Value: 125
+  stepSize:
+    <debugId>k__BackingField: stepSize
+    m_OverrideState: 1
+    m_Value: 0.2
+  density:
+    <debugId>k__BackingField: density
+    m_OverrideState: 1
+    m_Value: 0.045
+  minDensity:
+    <debugId>k__BackingField: minDensity
+    m_OverrideState: 1
+    m_Value: 0
+  fogColor:
+    <debugId>k__BackingField: fogColor
+    m_OverrideState: 1
+    m_Value:
+      r: 1
+      g: 1
+      b: 1
+      a: 1
+  brightness:
+    <debugId>k__BackingField: brightness
+    m_OverrideState: 1
+    m_Value: 3
+  anisotropy:
+    <debugId>k__BackingField: anisotropy
+    m_OverrideState: 1
+    m_Value: 0.8
+  blurRadius:
+    <debugId>k__BackingField: blurRadius
+    m_OverrideState: 1
+    m_Value: 0.01
+  blurStrength:
+    <debugId>k__BackingField: blurStrength
+    m_OverrideState: 1
+    m_Value: 0.5
+  blurIterations:
+    <debugId>k__BackingField: blurIterations
+    m_OverrideState: 1
+    m_Value: 2
 --- !u!114 &-581120513425526550
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -462,8 +547,6 @@ MonoBehaviour:
   - {fileID: -6288072647309666549}
   - {fileID: 7518938298396184218}
   - {fileID: -1410297666881709256}
-  - {fileID: -7750755424749557576}
-  - {fileID: -5139089513906902183}
 --- !u!114 &853819529557874667
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -531,6 +614,71 @@ MonoBehaviour:
   chromaticAbberationIntensity:
     m_OverrideState: 1
     m_Value: 0.5
+--- !u!114 &972520311532555834
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdaaa7489cdb84f4b9389e3a3e61a780, type: 3}
+  m_Name: SkyAndClouds
+  m_EditorClassIdentifier: 
+  active: 1
+  <displayName>k__BackingField: 
+  enabled:
+    <debugId>k__BackingField: enabled
+    m_OverrideState: 1
+    m_Value: 0
+  compositing:
+    <debugId>k__BackingField: compositing
+    m_OverrideState: 1
+    m_Value:
+      renderScale: 0.4
+      blurRadius: 0.0025
+      blurStrength: 0.01
+      blurIterations: 1
+      alphaStep: 0
+      alphaSoftness: 0.35
+      cloudBrightness: 0.3
+      skyBrightness: 0.2
+  clouds:
+    <debugId>k__BackingField: clouds
+    m_OverrideState: 1
+    m_Value:
+      quality: 2
+      steps: 30
+      stepSize: 80
+      cloudLayerLow: 1
+      cloudLayerHigh: 4
+      cloudShadows: 0
+      cloudDataLow: {fileID: 0}
+      cloudDataHigh: {fileID: 0}
+  sky:
+    <debugId>k__BackingField: sky
+    m_OverrideState: 1
+    m_Value:
+      sunSize: 0.1
+      sunIntensity: 1000
+      starIntensity: 5
+      lightWavelengths: {x: 680, y: 550, z: 440}
+      densityPower: 8
+      DayScattering: 1
+      EveningScattering: 8
+      dayColor:
+        r: 1
+        g: 1
+        b: 1
+        a: 1
+      eveningColor:
+        r: 1
+        g: 0.509
+        b: 0.509
+        a: 1
+      saturation: 1.5
+      eveningThreshold: 3
 --- !u!114 &1052315754049611418
 MonoBehaviour:
   m_ObjectHideFlags: 3
