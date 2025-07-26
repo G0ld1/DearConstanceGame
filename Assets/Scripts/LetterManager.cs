@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using Yarn.Unity;
 
@@ -18,6 +19,9 @@ public class LetterManager : MonoBehaviour
     private Dictionary<string, LetterSection> letterSections = new Dictionary<string, LetterSection>();
 
     [SerializeField] private UnityEngine.UI.ScrollRect letterScrollRect; // Assign in inspector
+    [SerializeField] private GameObject letterPanel; // Assign your Scroll View panel here
+
+    private Coroutine typewriterCoroutine;
 
     private void Awake()
     {
@@ -46,22 +50,79 @@ public class LetterManager : MonoBehaviour
         Debug.Log($"Attempting to add content to section: {sectionKey}");
         if (manager.letterSections.ContainsKey(sectionKey))
         {
-            manager.letterSections[sectionKey].content = content;
-            manager.letterSections[sectionKey].isWritten = true;
-            manager.UpdateLetterUI();
-            Debug.Log($"Successfully added content to section: {sectionKey}");
+            var section = manager.letterSections[sectionKey];
+            if (!section.isWritten)
+            {
+                section.content = content;
+                section.isWritten = true;
+
+                // Show the letter panel
+                if (manager.letterPanel != null)
+                    manager.letterPanel.SetActive(true);
+
+                // Lock player controls and show cursor using LetterLogic
+                var letterLogic = FindFirstObjectByType<LetterLogic>();
+                if (letterLogic != null)
+                    letterLogic.ToggleLetterPanel(true);
+
+                // Animate the new section
+                if (manager.typewriterCoroutine != null)
+                    manager.StopCoroutine(manager.typewriterCoroutine);
+                manager.typewriterCoroutine = manager.StartCoroutine(manager.TypewriterEffect(sectionKey));
+                
+                Debug.Log($"Successfully added content to section: {sectionKey}");
+            }
+            else
+            {
+                Debug.Log($"Section '{sectionKey}' is already written and cannot be overwritten.");
+            }
         }
         else
         {
             Debug.LogWarning($"Section '{sectionKey}' not found. Available sections: {string.Join(", ", manager.letterSections.Keys)}");
         }
     }
-    
+
+    private IEnumerator TypewriterEffect(string newSectionKey)
+    {
+        string fullLetter = "Dear Constance,\n\n";
+        var orderedSections = new List<LetterSection>(letterSections.Values);
+        orderedSections.Sort((a, b) => a.sectionOrder.CompareTo(b.sectionOrder));
+
+        foreach (var section in orderedSections)
+        {
+            if (section.isWritten && section.sectionTitle.ToLower() != newSectionKey)
+            {
+                fullLetter += $"{section.content}\n\n";
+            }
+            else if (section.isWritten && section.sectionTitle.ToLower() == newSectionKey)
+            {
+                // Animate this section
+                string content = section.content;
+                for (int i = 0; i <= content.Length; i++)
+                {
+                    letterUI.text = fullLetter + content.Substring(0, i) + "\n\n...";
+                    if (letterScrollRect != null)
+                        letterScrollRect.verticalNormalizedPosition = 1f;
+                    yield return new WaitForSeconds(0.05f); // Adjust speed as needed
+                }
+                fullLetter += content + "\n\n";
+            }
+            else
+            {
+                fullLetter += "...\n\n";
+            }
+        }
+
+        fullLetter += "\nFrank";
+        letterUI.text = fullLetter;
+        if (letterScrollRect != null)
+            letterScrollRect.verticalNormalizedPosition = 1f;
+    }
+
     private void UpdateLetterUI()
     {
-        string fullLetter = "Dear Constance,\n\n"; // Letter header
-        
-        // Order sections by sectionOrder
+        string fullLetter = "Dear Constance,\n\n";
         var orderedSections = new List<LetterSection>(letterSections.Values);
         orderedSections.Sort((a, b) => a.sectionOrder.CompareTo(b.sectionOrder));
 
@@ -73,17 +134,13 @@ public class LetterManager : MonoBehaviour
             }
             else
             {
-                fullLetter += "...\n\n"; // Placeholder for unwritten sections
+                fullLetter += "...\n\n";
             }
         }
 
-        fullLetter += "\nFrank"; // Letter signature
+        fullLetter += "\nFrank";
         letterUI.text = fullLetter;
-
-        // Scroll to top (1) or bottom (0)
         if (letterScrollRect != null)
-            letterScrollRect.verticalNormalizedPosition = 1f; // 1 = top, 0 = bottom
+            letterScrollRect.verticalNormalizedPosition = 1f;
     }
-
-   
 }

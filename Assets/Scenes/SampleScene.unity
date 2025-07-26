@@ -13496,6 +13496,7 @@ MonoBehaviour:
     isWritten: 0
     sectionOrder: 5
   letterScrollRect: {fileID: 1060761622}
+  letterPanel: {fileID: 1060761620}
 --- !u!4 &850671317
 Transform:
   m_ObjectHideFlags: 0
