@@ -1,11 +1,94 @@
 ﻿title: bedRoomMemory
 ---
-Frank: The bed is left undone again, I wonder if she would notice if I left it like this. #line:06c5d16 
-Frank: *sigh* #line:01b8b63 
-Frank: We basically don't even sleep together at this point... #line:08279e3 
+Frank: It's been so long since we've cuddled together to fall asleep...   #line:06c5d16 
+Frank: Hah- It feels so stupid to think about it this way. It almost feels like a dream - or a fairy tale we told ourselves. One of two dumb kids who thought love could fix everything. #line:01b8b63 
+Frank: Is it sad that it wasn't? OR maybe... a relief?
 
--> Remember the comfort of her hug #line:02c0af6 
-    <<write_to_letter "bedroom_section" "Do you remember when we first moved in together? We had just rented a small apartment downtown, and that neighborhood was known for having high crime rates. I was embarrassed to tell you this at the time, but I fell asleep every night praying that I could keep you safe in my embrace if anything bad happened. The heat of hugging you as we both fell asleep is one I've forgotten so long ago. Along with so many other things as the years pulled us apart. But lying here now, I wonder — could we ever find our way back?">>
--> Remember your first mistake #line:0c35ed9 
-    <<write_to_letter "bedroom_section" "Do you remember when we first moved in together? Both our parents pulled every string they could to find us a small apartment downtown. Our young minds somehow thought that living together was a great idea. We had no way of backing out either, neither of us could go face our parents after sacrificing so much and tell them we hadn't thought it through. That was probably the first of so many mistakes we made. I wonder if facing the truth back then would've saved us forty years of pretending.">>
+<<declare $bedroom_choice_made = false as bool>>
+<<if not $bedroom_choice_made>>
+
+    -> Remember the comfort of her hug #line:02c0af6 
+        <<set $bedroom_choice_made to true>>
+        <<disable_ripple "BedInteractObj">>
+        <<write_to_letter "bedroom_section" "Do you remember when we first moved in together? We had just rented a small apartment downtown, and that neighborhood was known for having high crime rates. I was embarrassed to tell you this at the time, but I fell asleep every night praying that I could keep you safe in my embrace if anything bad happened. The heat of hugging you as the busy streets calmed down, leaving us alone with the wind as it whooshed against our not so double-sided windows is one I've forgotten so long ago. Along with so many other things as the years pulled us apart. But lying here now, I wonder — could we ever find our way back?">>
+    -> Remember your first mistake #line:0c35ed9 
+        <<set $bedroom_choice_made to true>>
+        <<disable_ripple "BedInteractObj">>
+        <<write_to_letter "bedroom_section" "Do you remember when we first moved in together? Both our parents pulled every string they could to find us a small apartment downtown. Our young minds somehow thought that living together was a great idea. We had no way of backing out either, neither of us could bear to face our parents after all the sacrifices they made and tell them we hadn't thought it through. That was probably the first of so many mistakes we made. I wonder if facing the truth back then would’ve saved us forty years of pretending.">>
+<<else>>
+    Frank: There is nothing more to add to the letter.
+<<endif>>
 ===
+
+title: KitchenMemory
+---
+
+Frank: Sometimes it's hard to imagine how this box of happy memories turned into a cemetery.
+Frank: Most times it isn't. 
+Frank: The evidence is all here after all. The love we shared here turned into anger, and even worse. Complete silence. 
+Frank: Maybe taking turns in here is a small price to pay to have some peace and quiet.
+Frank: But deep down I hope we both believe it wasn't a fair trade.
+
+<<declare $kitchen_choice_made = false as bool>>
+<<if not $kitchen_choice_made>>
+    -> Relive the daily arguments
+        <<set $kitchen_choice_made to true>>
+        <<disable_ripple "TableInteractObj">>
+        <<write_to_letter "kitchen_section" "I wonder if you get the same feeling as I do when I want to go to the kitchen and notice that you are eating or cooking something. A mix of resentment and suffering, as I stand five feet away from the door considering if I go in and risk having yet another fight over a stupid thing or if I just starve for another hour, hoping you will eventually leave and that I can finally grab myself a snack. Its not like you are cooking enough for two, I don't do that either, so whats really the point of risking it, right? That's probably the reason why the chairs at the kitchen table are never aligned or that I don't even want to remember what your favourite dish is, it always brings trouble, and thats something i know we both can't tolerate anymore.">>
+    -> Remember how happy you were making her favourite dish
+        <<set $kitchen_choice_made to true>>
+        <<disable_ripple "TableInteractObj">>
+        <<write_to_letter "kitchen_section" "The way the chairs in the kitchen never seem to align with each other, despite them moving every day, is a constant reminder of how much I loved to cook you your favourite dish, a simple carbonara. One even a child could make, but that would have you showering me with praises that felt as if you had just eaten at a 6 star restaurant. It made me so happy, but it always had me wondering. Was it your favourite dish because you loved it, or because your favourite person would make it for you with love and care? I used to at least be a little certain of my answer, but now I don't even know if you enjoy eating anymore, or if you just do it because your body makes you. It's been a good while since the kitchen was last overflowing with the smell of the dishes we used to make for one another so excitedly. Maybe its time we try another recipe from the book together. ">>
+<<else>>
+    Frank: I already have what I needed from here.
+<<endif>>
+===
+
+title: LivingRMemory
+---
+
+Frank: I forget this table even exists sometimes… and maybe that’s on purpose.
+Frank: Every time I see it, I remember how stupid I was to think this meant something.
+Frank: Did I really believe that they would fix something this many times?
+Frank: I saw the smile dying — we both did. But we kept pretending it was still warm. 
+Frank: Not anymore though.
+
+<<declare $livingroom_choice_made = false as bool>>
+<<if not $livingroom_choice_made>>
+    -> Embrace the love you wanted to give her
+        <<set $livingroom_choice_made to true>>
+        <<disable_ripple "FlowerTableObj">>
+        <<write_to_letter "livingroom_section" "One thing I used to be certain of was your love for flowers and being the dumb, lovestruck man I was, I hung on to that one trait of yours and made it my mission to make sure it never died. Its ironic to think about it now, as I've stopped giving you flowers, and you've stopped tending to them so many years ago. Maybe I finally realized your smile was robotic, maybe you finally realized they all came with a but and a sorry attached as a note. But, there used to be a time where we both enjoyed it, maybe we overlooked it as the love we felt from each other was warm. The flowers on these vases are all dead now, way beyond the point of repair, but I think humans are a bit more resilient. What do you think?">>
+    -> Accept the falsehood of your attempts
+        <<set $livingroom_choice_made to true>>
+        <<disable_ripple "FlowerTableObj">>
+        <<write_to_letter "livingroom_section" "I think everything about our marriage can be implied from taking a look at your "collection" of flower vases in the living room. Each one supposedly marking an "important moment" - now just dried up stems and hollow porcelain . Sometimes I wonder if we were really okay with giving and receiving flowers that always had a second meaning to them, whether it be an apology or something else. But I imagine that over 40 years we both became experts at the art of lying to each other. ">>
+<<else>>
+    Frank: I don't feel like looking at this table anymore.
+<<endif>>
+===
+
+title: GarageMemory
+---
+
+Frank: I… almost forgot these existed. My very own Sonatas, gathering dust.
+Frank: That piano — it’s the reason we met.
+Frank: Funny, isn’t it? One beautiful sound… and a lifetime of noise that followed.
+Frank: Maybe it all started with that tunnel vision. Maybe I mistook music for love.
+
+<<declare $garage_choice_made = false as bool>>
+<<if not $garage_choice_made>>
+    -> Remember the first time you heard her play
+        <<set $garage_choice_made to true>>
+        <<disable_ripple "BoxInteractObj">>
+        <<write_to_letter "garage_section" "Your love for the piano was the very reason we met in the first place, as if not for your ability to make any piece sound 10 times more soothing and graceful, I wouldn't have stopped my normal walk back from school to listen to a beautiful melody coming from a piano, and gathered the courage to speak to the person sitting at it, and disturbing her amazing performance to ask for her name. As we got closer, and our flame consequently brighter, you decided to start writing music just for me, pouring every piece of you into the piano, just to make sure I knew how much you loved me. It was the most beautiful thing I had heard, and that was just the sound of your voice. When you finally showed me the music I was certain you were a once-in-a-generation genius. Its been so long since you've played them to me, I can barely tell if they were real. ">>
+    -> Resent taking that route home that day
+        <<set $garage_choice_made to true>>
+        <<disable_ripple "BoxInteractObj">>
+        <<write_to_letter "garage-section" "Your love for the piano was the very reason we met in the first place. I have to admit sometimes I dreamt of how my life would have been if I just didn't go home through that route from school. Nowadays I pray that dream comes true somehow. Its ironic how I can remember every single song you have played on that damn piano but I can't even remember the sound of your voice. Some people say musicians are good with their words but I think you might be an exception to the norm. Not like i'm any better, but we both know its never just one person's fault that things go wrong. Maybe our first was truly thinking we loved each other.">>
+<<else>>
+    Frank: I can't squeeze any more music out of these.
+<<endif>>
+===
+
+

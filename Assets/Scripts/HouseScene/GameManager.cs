@@ -25,15 +25,18 @@ public class GameManager : MonoBehaviour
     
     [Header("Interaction System")]
 
-    [SerializeField] private GameObject[] collectibleObjects; // Objetos para encontrar
+    [SerializeField] private GameObject[] collectibleObjects; 
     
     [Header("Narrative System")]
     [SerializeField] private DialogueRunner dialogueRunner;
     
     [Header("UI")]
-    [SerializeField] private GameObject letterPanel;
+  
     [SerializeField] private GameObject objectiveUI;
     [SerializeField] private TMPro.TextMeshProUGUI objectiveText;
+
+    [Header("Debug Tools")]
+    [SerializeField] private bool enableDebugTools = true;
 
     // Progress tracking
     private HashSet<string> foundObjects = new HashSet<string>();
@@ -66,21 +69,21 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("=== InitializeGame START ===");
         
-        // Find references if not assigned
+      
         if (playerController == null)
         {
             playerController = FindFirstObjectByType<PlayerMovementScript>();
             Debug.Log($"Found PlayerMovementScript: {(playerController != null ? "YES" : "NO")}");
         }
         
-        // Find memory objects automatically
+ 
         InteractableStoryObject[] allStoryObjects = FindObjectsByType<InteractableStoryObject>(FindObjectsSortMode.None);
         Debug.Log($"Found {allStoryObjects.Length} InteractableStoryObjects");
 
         List<GameObject> memoryObjects = new List<GameObject>();
         foreach (var storyObj in allStoryObjects)
         {
-            // Para já, adiciona todos os story objects como coletáveis
+           
             memoryObjects.Add(storyObj.gameObject);
             Debug.Log($"Added {storyObj.name} as collectible");
         }
@@ -112,6 +115,16 @@ public class GameManager : MonoBehaviour
 
         OnGameStateChanged?.Invoke(newState);
     }
+
+    [YarnCommand("complete_study")]
+    public static void CompleteStudyDialogue()
+    {
+        if (Instance != null)
+        {
+            Instance.OnStudyDialogueComplete();
+        }
+    }
+
 
     private void HandleStateExit(GameState exitingState)
     {
@@ -163,41 +176,38 @@ public class GameManager : MonoBehaviour
 
     private void HandleWakingUpState()
     {
-        // Player acorda no quarto
-        Debug.Log("=== HandleWakingUpState START ===");
+     
         
-        // Debug player spawn
+
         if (Player != null && playerSpawnPoint != null)
         {
-            Debug.Log($"Moving player from {Player.transform.position} to {playerSpawnPoint.transform.position}");
+          
             Player.transform.position = playerSpawnPoint.transform.position;
-            Debug.Log($"Player position after move: {Player.transform.position}");
+           
         }
         else
         {
             Debug.LogError($"Player reference: {(Player != null ? "OK" : "NULL")}, SpawnPoint: {(playerSpawnPoint != null ? "OK" : "NULL")}");
         }
         
-        // Debug player control
-        Debug.Log("Enabling player control...");
+      
         EnablePlayerControl();
         
-        // Debug doors
-        Debug.Log("Closing all doors...");
+   
         CloseAllDoors();
 
         BRDoor.SetLocked(false);
         
-        // Debug interactions
-        Debug.Log("Disabling all interactions...");
+      
+     
         DisableAllInteractions();
 
         
               
-        // Debug dialogue
+    
         if (dialogueRunner != null)
         {
-            Debug.Log("Starting Intro dialogue...");
+         
             dialogueRunner.StartDialogue("Intro");
         }
         else
@@ -205,10 +215,10 @@ public class GameManager : MonoBehaviour
             Debug.LogError("DialogueRunner reference is NULL!");
         }
         
-        Debug.Log("Updating objective...");
+       
         UpdateObjective("Go talk to Constance...");
         
-        Debug.Log("=== HandleWakingUpState END ===");
+     
     }
 
     private void HandleGoingToConstanceState()
@@ -247,11 +257,17 @@ public class GameManager : MonoBehaviour
         OpenAllDoors();
         EnableAllInteractions();
         
-        // Mostrar objetos coletáveis
+       
         foreach (GameObject obj in collectibleObjects)
         {
             if (obj != null)
-                obj.SetActive(true);
+            {
+                var interactable = obj.GetComponent<InteractableStoryObject>();
+                if (interactable != null)
+                {
+                    interactable.enabled = true;
+                }
+            }
         }
         
         UpdateObjective($"Explore the house and find memories");
@@ -259,10 +275,10 @@ public class GameManager : MonoBehaviour
 
     private void HandleDeliveringLetterState()
     {
-        // Jogador pode entregar a carta
+  
         DisableAllInteractions();
         
-        // Só pode interagir com a porta da Constance
+  
         if (constanceDoor != null)
             constanceDoor.SetInteractable(true);
         
@@ -272,10 +288,10 @@ public class GameManager : MonoBehaviour
     private void HandleGameEndedState()
     {
         DisablePlayerControl();
-        // Handle endings...
+   
     }
 
-    // Door Management
+
     private void CloseAllDoors()
     {
         Debug.Log($"CloseAllDoors called. Doors array length: {(allDoors != null ? allDoors.Length : 0)}");
@@ -313,29 +329,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Interaction Management
+
     private void EnableAllInteractions()
     {
         InteractableStoryObject[] storyObjects = FindObjectsByType<InteractableStoryObject>(FindObjectsSortMode.None);
         foreach (var storyObject in storyObjects)
         {
-            storyObject.gameObject.SetActive(true);
+            storyObject.enabled = true;
         }
     }
-
-
 
     private void DisableAllInteractions()
     {
         InteractableStoryObject[] storyObjects = FindObjectsByType<InteractableStoryObject>(FindObjectsSortMode.None);
         foreach (var storyObject in storyObjects)
         {
-            storyObject.gameObject.SetActive(false);
+            storyObject.enabled = false; 
         }
     }
 
 
-    // Player Control
+   
     private void EnablePlayerControl()
     {
         Debug.Log($"EnablePlayerControl called. PlayerController: {(playerController != null ? "OK" : "NULL")}");
@@ -430,7 +444,42 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.DeliveringLetter)
         {
             ChangeGameState(GameState.GameEnded);
-            // Trigger ending dialogue/cutscene
+         
+        }
+    }
+
+    // Debug methods com botões no Inspector
+    [ContextMenu("Debug: Force WakingUp")]
+    public void Debug_ForceWakingUp() => ChangeGameState(GameState.WakingUp);
+
+    [ContextMenu("Debug: Force GoingToConstance")]
+    public void Debug_ForceGoingToConstance() => ChangeGameState(GameState.GoingToConstance);
+
+    [ContextMenu("Debug: Force ReturningToStudy")]
+    public void Debug_ForceReturningToStudy() => ChangeGameState(GameState.ReturningToStudy);
+
+    [ContextMenu("Debug: Force ExploringHouse")]
+    public void Debug_ForceExploringHouse() => ChangeGameState(GameState.ExploringHouse);
+
+    [ContextMenu("Debug: Force DeliveringLetter")]
+    public void Debug_ForceDeliveringLetter() => ChangeGameState(GameState.DeliveringLetter);
+
+    [ContextMenu("Debug: Force GameEnded")]
+    public void Debug_ForceGameEnded() => ChangeGameState(GameState.GameEnded);
+
+    [ContextMenu("Debug: Add Random Memory")]
+    public void Debug_AddRandomMemory()
+    {
+        string randomMemory = $"DebugMemory_{UnityEngine.Random.Range(1000, 9999)}";
+        OnObjectFound(randomMemory);
+    }
+
+    [ContextMenu("Debug: Complete All Memories")]
+    public void Debug_CompleteAllMemories()
+    {
+        for (int i = foundObjects.Count; i < totalObjectsToFind; i++)
+        {
+            OnObjectFound($"DebugMemory_{i}");
         }
     }
 
@@ -444,14 +493,38 @@ public class GameManager : MonoBehaviour
     // Debug
     private void OnGUI()
     {
-        if (Application.isEditor)
-        {
-            GUI.Box(new Rect(10, 10, 300, 120), 
-                $"State: {currentState}\n" +
-                $"Objects: {foundObjects.Count}/{totalObjectsToFind}\n" +
-                $"Can Interact: {CanInteract()}\n" +
-                $"Can Move Freely: {CanMoveFreelyBetweenRooms()}");
-        }
+        if (!Application.isEditor && !Debug.isDebugBuild) return;
+        if (!enableDebugTools) return;
+
+        // Info box
+        GUI.Box(new Rect(10, 10, 300, 120), 
+            $"State: {currentState}\n" +
+            $"Objects: {foundObjects.Count}/{totalObjectsToFind}\n" +
+            $"Can Interact: {CanInteract()}\n" +
+            $"Can Move Freely: {CanMoveFreelyBetweenRooms()}");
+
+        // State buttons
+        GUI.Label(new Rect(10, 140, 200, 20), "Quick State Change:");
+        
+        if (GUI.Button(new Rect(10, 160, 100, 25), "Waking Up"))
+            ChangeGameState(GameState.WakingUp);
+        if (GUI.Button(new Rect(120, 160, 100, 25), "To Constance"))
+            ChangeGameState(GameState.GoingToConstance);
+        if (GUI.Button(new Rect(10, 190, 100, 25), "To Study"))
+            ChangeGameState(GameState.ReturningToStudy);
+        if (GUI.Button(new Rect(120, 190, 100, 25), "Exploring"))
+            ChangeGameState(GameState.ExploringHouse);
+        if (GUI.Button(new Rect(10, 220, 100, 25), "Delivering"))
+            ChangeGameState(GameState.DeliveringLetter);
+        if (GUI.Button(new Rect(120, 220, 100, 25), "Game End"))
+            ChangeGameState(GameState.GameEnded);
+
+        // Memory management
+        GUI.Label(new Rect(10, 260, 200, 20), "Memory Management:");
+        if (GUI.Button(new Rect(10, 280, 100, 25), "Add Memory"))
+            Debug_AddRandomMemory();
+        if (GUI.Button(new Rect(120, 280, 100, 25), "Complete All"))
+            Debug_CompleteAllMemories();
     }
 }
 
@@ -459,10 +532,10 @@ public class GameManager : MonoBehaviour
 public enum GameState
 {
     None,
-    WakingUp,           // Frank acorda, ouve piano, vai para Constance
-    GoingToConstance,   // Frank foi para sala, não consegue falar, volta para estúdio
-    ReturningToStudy,   // Frank no estúdio, decide escrever carta
-    ExploringHouse,     // Frank explora casa procurando memórias
-    DeliveringLetter,   // Frank pode entregar a carta
-    GameEnded           // Jogo terminou
+    WakingUp,           
+    GoingToConstance,   
+    ReturningToStudy,   
+    ExploringHouse,    
+    DeliveringLetter,   
+    GameEnded           
 }

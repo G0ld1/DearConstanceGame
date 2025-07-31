@@ -11,15 +11,15 @@ public class LetterManager : MonoBehaviour
         public string sectionTitle;
         public string content;
         public bool isWritten;
-        public int sectionOrder; // To maintain letter structure
+        public int sectionOrder; 
     }
 
     [SerializeField] private TMPro.TextMeshProUGUI letterUI;
-    [SerializeField] private List<LetterSection> availableSections; // Configure in inspector
+    [SerializeField] private List<LetterSection> availableSections; 
     private Dictionary<string, LetterSection> letterSections = new Dictionary<string, LetterSection>();
 
-    [SerializeField] private UnityEngine.UI.ScrollRect letterScrollRect; // Assign in inspector
-    [SerializeField] private GameObject letterPanel; // Assign your Scroll View panel here
+    [SerializeField] private UnityEngine.UI.ScrollRect letterScrollRect; 
+    [SerializeField] private GameObject letterPanel; 
 
     private Coroutine typewriterCoroutine;
 
@@ -32,14 +32,14 @@ public class LetterManager : MonoBehaviour
             letterSections.Add(section.sectionTitle.ToLower(), section);
         }
         
-        // Initialize UI
+        
         UpdateLetterUI();
     }
 
     [YarnCommand("write_to_letter")]
     public static void WriteToLetter(string sectionKey, string content)
     {
-        // Find the LetterManager instance in the scene
+    
         var manager = FindFirstObjectByType<LetterManager>();
         if (manager == null)
         {
@@ -56,16 +56,15 @@ public class LetterManager : MonoBehaviour
                 section.content = content;
                 section.isWritten = true;
 
-                // Show the letter panel
+               
                 if (manager.letterPanel != null)
                     manager.letterPanel.SetActive(true);
 
-                // Lock player controls and show cursor using LetterLogic
+                
                 var letterLogic = FindFirstObjectByType<LetterLogic>();
                 if (letterLogic != null)
                     letterLogic.ToggleLetterPanel(true);
 
-                // Animate the new section
                 if (manager.typewriterCoroutine != null)
                     manager.StopCoroutine(manager.typewriterCoroutine);
                 manager.typewriterCoroutine = manager.StartCoroutine(manager.TypewriterEffect(sectionKey));
@@ -89,6 +88,11 @@ public class LetterManager : MonoBehaviour
         var orderedSections = new List<LetterSection>(letterSections.Values);
         orderedSections.Sort((a, b) => a.sectionOrder.CompareTo(b.sectionOrder));
 
+       
+        var letterLogic = FindFirstObjectByType<LetterLogic>();
+        if (letterLogic != null)
+            letterLogic.SetCanCloseLetter(false);
+
         foreach (var section in orderedSections)
         {
             if (section.isWritten && section.sectionTitle.ToLower() != newSectionKey)
@@ -97,14 +101,15 @@ public class LetterManager : MonoBehaviour
             }
             else if (section.isWritten && section.sectionTitle.ToLower() == newSectionKey)
             {
-                // Animate this section
+               
                 string content = section.content;
                 for (int i = 0; i <= content.Length; i++)
                 {
                     letterUI.text = fullLetter + content.Substring(0, i) + "\n\n...";
-                    if (letterScrollRect != null)
-                        letterScrollRect.verticalNormalizedPosition = 1f;
-                    yield return new WaitForSeconds(0.05f); // Adjust speed as needed
+                    
+                  
+                    
+                    yield return new WaitForSeconds(0.01f);
                 }
                 fullLetter += content + "\n\n";
             }
@@ -116,8 +121,10 @@ public class LetterManager : MonoBehaviour
 
         fullLetter += "\nFrank";
         letterUI.text = fullLetter;
-        if (letterScrollRect != null)
-            letterScrollRect.verticalNormalizedPosition = 1f;
+        
+       
+        if (letterLogic != null)
+            letterLogic.SetCanCloseLetter(true);
     }
 
     private void UpdateLetterUI()
@@ -140,7 +147,7 @@ public class LetterManager : MonoBehaviour
 
         fullLetter += "\nFrank";
         letterUI.text = fullLetter;
-        if (letterScrollRect != null)
-            letterScrollRect.verticalNormalizedPosition = 1f;
+        
+     
     }
 }
