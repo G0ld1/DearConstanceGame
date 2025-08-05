@@ -10,6 +10,10 @@ public class PlayerMovementScript : MonoBehaviour
     public float moveSpeed = 5f;
     public float lookSens = 2f;
 
+    [Header("Pause Menu")]
+    [SerializeField] private PauseMenuAnimationController pauseMenuController;
+    [SerializeField] private GameObject pauseMenuPanel; // opcional para verificação
+
     private CharacterController controller;
     private Camera cam;
     private Vector2 moveInput;
@@ -21,15 +25,13 @@ public class PlayerMovementScript : MonoBehaviour
 
     private bool isGrounded;
     private float xRotation = 0f;
+    private bool isPaused = false;
 
     private InputSystem_Actions inputActions;
-
-
 
     private void Awake()
     {
         inputActions = new InputSystem_Actions();
-
     }
 
     private void OnEnable()
@@ -41,6 +43,9 @@ public class PlayerMovementScript : MonoBehaviour
 
         inputActions.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
         inputActions.Player.Look.canceled += ctx => lookInput = Vector2.zero;
+
+        // Adiciona o input de pausa
+        inputActions.Player.Pause.performed += ctx => TogglePause();
     }
 
     private void OnDisable()
@@ -52,29 +57,28 @@ public class PlayerMovementScript : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         cam = GetComponentInChildren<Camera>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        SetCursorState(false); // Começa com cursor locked
     }
 
     void Update()
     {
-        Look();
-        Move();
-
-        isGrounded = controller.isGrounded;
-
-        if (isGrounded && velocity.y < 0)
+        // Só processa movimento se não estiver pausado
+        if (!isPaused)
         {
-            velocity.y = -2f; // Mantém o personagem colado ao chão
+            Look();
+            Move();
+
+            isGrounded = controller.isGrounded;
+
+            if (isGrounded && velocity.y < 0)
+            {
+                velocity.y = -2f;
+            }
+            
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
         }
-        
-        
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
-
-
-
 
     void Move()
     {
@@ -82,7 +86,7 @@ public class PlayerMovementScript : MonoBehaviour
         controller.Move(move * moveSpeed * Time.fixedDeltaTime);
     }
     
-     void Look()
+    void Look()
     {
         xRotation -= lookInput.y * lookSens;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
@@ -90,4 +94,70 @@ public class PlayerMovementScript : MonoBehaviour
         cam.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * lookInput.x * lookSens);
     }
+
+    private void TogglePause()
+    {
+        isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            OpenPauseMenu();
+        }
+        else
+        {
+            ClosePauseMenu();
+        }
+    }
+
+    private void OpenPauseMenu()
+    {
+        Debug.Log("Opening pause menu");
+        
+    
+        
+        // Mostra cursor
+        SetCursorState(true);
+        
+        // Abre o menu através do controller
+        if (pauseMenuController != null)
+        {
+            pauseMenuController.ShowPauseMenu();
+        }
+        else if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(true);
+        }
+    }
+
+    private void ClosePauseMenu()
+    {
+        Debug.Log("Closing pause menu");
+        
+  
+        
+        // Esconde cursor
+        SetCursorState(false);
+        
+        // Fecha o menu
+        if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(false);
+        }
+    }
+
+    private void SetCursorState(bool showCursor)
+    {
+        Cursor.visible = showCursor;
+        Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    // Método público para outros scripts fecharem o menu
+    public void ResumeGame()
+    {
+        isPaused = false;
+        ClosePauseMenu();
+    }
+
+    // Propriedade para outros scripts verificarem se está pausado
+    public bool IsPaused => isPaused;
 }
