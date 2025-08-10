@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Quadros
+  - Dialogue
   layers:
   - Default
   - TransparentFX

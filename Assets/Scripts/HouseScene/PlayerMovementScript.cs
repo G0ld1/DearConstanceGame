@@ -78,6 +78,8 @@ public class PlayerMovementScript : MonoBehaviour
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
         }
+        
+      
     }
 
     void Move()
@@ -137,9 +139,13 @@ public class PlayerMovementScript : MonoBehaviour
         
         // Esconde cursor
         SetCursorState(false);
-        
+
         // Fecha o menu
-        if (pauseMenuPanel != null)
+        if (pauseMenuController != null)
+        {
+            pauseMenuController.HidePauseMenu();
+        }
+        else if (pauseMenuPanel != null)
         {
             pauseMenuPanel.SetActive(false);
         }

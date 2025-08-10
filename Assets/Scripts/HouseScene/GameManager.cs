@@ -67,37 +67,31 @@ public class GameManager : MonoBehaviour
 
     private void InitializeGame()
     {
-        Debug.Log("=== InitializeGame START ===");
+       
         
       
         if (playerController == null)
         {
             playerController = FindFirstObjectByType<PlayerMovementScript>();
-            Debug.Log($"Found PlayerMovementScript: {(playerController != null ? "YES" : "NO")}");
         }
         
  
         InteractableStoryObject[] allStoryObjects = FindObjectsByType<InteractableStoryObject>(FindObjectsSortMode.None);
-        Debug.Log($"Found {allStoryObjects.Length} InteractableStoryObjects");
 
         List<GameObject> memoryObjects = new List<GameObject>();
         foreach (var storyObj in allStoryObjects)
         {
            
             memoryObjects.Add(storyObj.gameObject);
-            Debug.Log($"Added {storyObj.name} as collectible");
         }
 
         collectibleObjects = memoryObjects.ToArray();
         totalObjectsToFind = collectibleObjects.Length;
         
-        Debug.Log($"Total objects to find: {totalObjectsToFind}");
         
         // Start game
-        Debug.Log("Changing to WakingUp state...");
         ChangeGameState(GameState.WakingUp);
         
-        Debug.Log("=== InitializeGame END ===");
     }
 
     public void ChangeGameState(GameState newState)
@@ -107,7 +101,6 @@ public class GameManager : MonoBehaviour
         GameState previousState = currentState;
         currentState = newState;
 
-        Debug.Log($"Game State: {previousState} → {newState}");
 
         // Handle state transitions
         HandleStateExit(previousState);
@@ -187,7 +180,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"Player reference: {(Player != null ? "OK" : "NULL")}, SpawnPoint: {(playerSpawnPoint != null ? "OK" : "NULL")}");
         }
         
       
@@ -216,7 +208,7 @@ public class GameManager : MonoBehaviour
         }
         
        
-        UpdateObjective("Go talk to Constance...");
+        UpdateObjective("Try to talk to Constance");
         
      
     }
@@ -235,7 +227,7 @@ public class GameManager : MonoBehaviour
         if (studioDoor != null)
             studioDoor.SetLocked(false);
         
-        UpdateObjective("Go to your study...");
+        UpdateObjective("Go to your study");
     }
 
     private void HandleReturningToStudyState()
@@ -247,7 +239,7 @@ public class GameManager : MonoBehaviour
         if (dialogueRunner != null)
             dialogueRunner.StartDialogue("Study");
         
-        UpdateObjective("Listen to Frank's thoughts...");
+        UpdateObjective("Listen to Frank's troubles");
     }
 
     private void HandleExploringHouseState()
@@ -282,7 +274,7 @@ public class GameManager : MonoBehaviour
         if (constanceDoor != null)
             constanceDoor.SetInteractable(true);
         
-        UpdateObjective("Deliver the letter to Constance...");
+        UpdateObjective("Deliver the letter to Constance.");
     }
 
     private void HandleGameEndedState()
@@ -294,7 +286,6 @@ public class GameManager : MonoBehaviour
 
     private void CloseAllDoors()
     {
-        Debug.Log($"CloseAllDoors called. Doors array length: {(allDoors != null ? allDoors.Length : 0)}");
 
         if (allDoors != null)
         {
@@ -303,7 +294,6 @@ public class GameManager : MonoBehaviour
                 if (door != null)
                 {
                     door.SetLocked(true);
-                    Debug.Log($"Locked door: {door.name}");
                 }
                 else
                 {
@@ -352,14 +342,12 @@ public class GameManager : MonoBehaviour
    
     private void EnablePlayerControl()
     {
-        Debug.Log($"EnablePlayerControl called. PlayerController: {(playerController != null ? "OK" : "NULL")}");
     
         if (playerController != null)
         {
             playerController.enabled = true;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            Debug.Log("Player control enabled successfully");
         }
         else
         {
@@ -380,20 +368,19 @@ public class GameManager : MonoBehaviour
     // Objective System
     private void UpdateObjective(string newObjective)
     {
-        Debug.Log($"UpdateObjective called with: {newObjective}");
-    
+
         if (objectiveText != null)
         {
             objectiveText.text = newObjective;
-            Debug.Log("Objective text updated successfully");
         }
         else
         {
             Debug.LogWarning("objectiveText is null - objective not displayed");
         }
+        
+        //Comentado pq yarncommands
     
-        OnObjectiveUpdated?.Invoke(newObjective);
-        Debug.Log($"Objective: {newObjective}");
+       // OnObjectiveUpdated?.Invoke(newObjective);
     }
 
     // Public methods for triggers and interactions
@@ -428,7 +415,6 @@ public class GameManager : MonoBehaviour
         if (!foundObjects.Contains(objectName))
         {
             foundObjects.Add(objectName);
-            Debug.Log($"Found object: {objectName} ({foundObjects.Count}/{totalObjectsToFind})");
             
             UpdateObjective($"Explore the house and find memories ({foundObjects.Count}/{totalObjectsToFind})");
             

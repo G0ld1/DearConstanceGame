@@ -1,23 +1,27 @@
 ﻿title: Intro
 ---
-Frank: She’s playing again…  That’s all she ever does now.  ...Well — at least the piano’s still happy. #line:0e11e00 
-Frank: It sounds beautifull as ever. #line:0a5fe25 
-Frank: Wish I could remember the sound of her voice to compare. Not that she remembers mine. #line:0a61ad7 
-Frank: I should—  ...I don’t know. Maybe I should try. Just try to.  #line:0f17231 
+Frank: She’s playing again… That piano's the only thing that still sounds alive in this house. #line:0e11e00 
+Frank: Still beautiful. Just like the first time I heard it. #line:0a5fe25 
+Frank: Wish I could remember the sound of her voice to compare... Not that she remembers mine. #line:0a61ad7 
+Frank: I should— ...I don’t know. Maybe I should try... To talk to her again.  #line:0f17231 
+
+<<show_objective "Try to talk to Constance">>
 ===
 
 title: CantDoIt
 ---
-Frank: I can't do it, I can't talk to her. #line:02ae568 
-Frank: *Hah* How pathetic. I can't even talk to my own wife.  #line:0465dc3 
-Frank: Why did I even try it? We haven't had a proper conversation in months. #line:0b8c7fe 
-Frank: I should just go to my study and keep myself busy. Keep to the routine Frank, that's all you can do. #line:0d597a7 
-Frank: You tried everything already, right? #line:0a8b98c 
+Frank: …No. Can’t do it. My body just… won’t. #line:02ae568 
+Frank: Heh Figures. Can’t even talk to my own wife.  #line:0465dc3 
+Frank: Why did I even try? We haven't had a real conversation in... months. #line:0b8c7fe 
+Frank: Whatever. I’ll just go to my study. Keep myself busy. Stick to the routine. #line:0d597a7 
+Frank: That’s all there is now. #line:0a8b98c 
+<<show_objective "Go to your study">>
 ===
 
 title: Study
 /// After sitting down to work on his charcoal drawings, Frank gets emotional as he can't remember his wife's face to draw it.
 ---
+<<show_objective "Listen to Frank's troubles">>
 Frank: 40 years together, and I've forgotten her face. #line:06022a9 
 Frank: How.... Has it gotten to this? #line:037bcde 
 Frank: When did all the fighting overshadow the love we had? #line:08fd872 
@@ -29,10 +33,10 @@ Frank: Hahaha.... #line:02e48eb
 Frank: Face it Frank, you've been here 100 times already. This is how it started old man.  #line:0900cfa 
 Frank: Every time you sit here after you've hit your limit once again, you come up with a wondrous solution to your problems.  #line:0429752 
 Frank: No matter how amazing it appears to be, no matter what you do, it just makes you drift further apart.  #line:0bb03cf 
-Frank: Hah- Hahaha.. Is it considering "drifting apart" if you can't see the other person anymore. #line:00e1a76 
+Frank: Hah- Hahaha.. I mean, is it even considered "drifting apart" if you can't see the other person anymore. #line:00e1a76 
 Frank: You might as well just be in different solar systems all together.  #line:06607ba 
 Frank: But- #line:03eb4fd 
-Frank: Maybe it will be different this time right? That's what your heart tells you. #line:06e1fd0 
+Frank: Maybe it will be different this time right? That's what your heart always tells you. #line:06e1fd0 
 Frank: Every- Single- Time!  #line:0edb93e 
 Frank: Why.. Can't I just lose hope. It would just be so much easier. #line:04653d5 
 Frank: Maybe next time, right? #line:0d98c4d 
@@ -48,10 +52,13 @@ Frank: No, too stiff.  #line:022386b
 Frank: "My love..." #line:0fbff87 
 Frank: Hah- Can I even say that anymore? #line:02ef673 
 /// after several attempts at writing the first paragraph
+<<wait 2>>
 Frank: Damn it... I don't even know how to begin. #line:00ae380 
 Frank: How do you write a letter to someone who is right there... but hasnt looked at you in years? #line:0d76c94 
 Frank: Maybe I just need to... walk around. #line:04b4450 
-Frank: Find some inspiration.
+Frank: Find some inspiration. #line:01096a9 
 Frank: A moment, a memory. Just- Something. #line:0c8ab45 
 <<complete_study>>
+
+<<show_objective "Explore the house and find memories">>
 ===

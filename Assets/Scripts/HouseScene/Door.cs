@@ -86,7 +86,12 @@ public class Door : MonoBehaviour
         if (isOpen || isAnimating) return;
 
         isOpen = true;
-        StartCoroutine(AnimateDoor(openRotation, openSound));
+        
+        // Use SoundManager instead of local audio
+        if (openSound != null)
+            SoundManager.Instance.PlaySFX(openSound);
+        
+        StartCoroutine(AnimateDoor(openRotation));
     }
 
     public void CloseDoor()
@@ -94,21 +99,20 @@ public class Door : MonoBehaviour
         if (!isOpen || isAnimating) return;
 
         isOpen = false;
-        StartCoroutine(AnimateDoor(closedRotation, closeSound));
+        
+        // Use SoundManager instead of local audio
+        if (closeSound != null)
+            SoundManager.Instance.PlaySFX(closeSound);
+        
+        StartCoroutine(AnimateDoor(closedRotation));
     }
 
-    private System.Collections.IEnumerator AnimateDoor(Vector3 targetRotation, AudioClip sound)
+    private System.Collections.IEnumerator AnimateDoor(Vector3 targetRotation)
     {
         isAnimating = true;
         
         Vector3 startRotation = transform.eulerAngles;
         float elapsedTime = 0f;
-        
-        // Play sound
-        if (sound != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(sound);
-        }
 
         while (elapsedTime < 1f)
         {
@@ -122,7 +126,6 @@ public class Door : MonoBehaviour
             yield return null;
         }
 
-        // Ensure final position is exact
         transform.eulerAngles = targetRotation;
         isAnimating = false;
     }
@@ -131,12 +134,9 @@ public class Door : MonoBehaviour
     {
         Debug.Log("Door is locked!");
         
-        if (lockedSound != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(lockedSound);
-        }
+        if (lockedSound != null)
+            SoundManager.Instance.PlaySFX(lockedSound);
 
-        // Optional: shake effect or visual feedback
         StartCoroutine(ShakeDoor());
     }
 

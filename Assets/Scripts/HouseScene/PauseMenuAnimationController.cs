@@ -14,7 +14,7 @@ public class PauseMenuAnimationController : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator menuAnimator;
     
-    // Trigger names (devem match os do Animator)
+    
     
     private const string TO_SETTINGS_TRIGGER = "ToSettings";
     private const string TO_SAVE_EXIT_TRIGGER = "ToSaveExit";
@@ -29,6 +29,12 @@ public class PauseMenuAnimationController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void ShowPauseMenu()
     {
+        // Pause dialogue and voice lines
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.PauseGame();
+        }
+        
         PauseMenu.SetActive(true);
         
         if (!hasInitialized)
@@ -37,8 +43,21 @@ public class PauseMenuAnimationController : MonoBehaviour
             hasInitialized = true;
         }
         
-        
         Debug.Log("Pause menu opened - playing initial animation");
+    }
+    
+    public void HidePauseMenu()
+    {
+        PauseMenu.SetActive(false);
+        
+        // Resume dialogue and voice lines
+        if (PauseManager.Instance != null)
+        {
+            Debug.Log("O instance do manager nao é nulo");
+            PauseManager.Instance.UnpauseGame();
+        }
+        
+        Debug.Log("Pause menu closed - resuming game");
     }
     
     private void SetupHoverEvents()
