@@ -1,4 +1,5 @@
 using UnityEngine;
+using Yarn.Unity;
 
 public class Door : MonoBehaviour
 {
@@ -11,11 +12,14 @@ public class Door : MonoBehaviour
     [SerializeField] private float openAngle = 90f; // Ângulo para abrir a porta
     [SerializeField] private float animationSpeed = 2f; // Velocidade da animação
     [SerializeField] private AnimationCurve openCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+       [Header("Narrative System")]
+    [SerializeField] private DialogueRunner dialogueRunner;
     
     [Header("Audio")]
     [SerializeField] private AudioClip openSound;
     [SerializeField] private AudioClip closeSound;
-    [SerializeField] private AudioClip lockedSound;
+ 
     [SerializeField] private AudioSource audioSource;
     
     private Vector3 closedRotation;
@@ -133,32 +137,16 @@ public class Door : MonoBehaviour
     private void PlayLockedFeedback()
     {
         Debug.Log("Door is locked!");
-        
-        if (lockedSound != null)
-            SoundManager.Instance.PlaySFX(lockedSound);
 
-        StartCoroutine(ShakeDoor());
-    }
 
-    private System.Collections.IEnumerator ShakeDoor()
-    {
-        Vector3 originalPosition = transform.position;
-        float shakeAmount = 0.1f;
-        float shakeDuration = 0.3f;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < shakeDuration)
+        if (dialogueRunner != null)
         {
-            Vector3 randomPoint = originalPosition + Random.insideUnitSphere * shakeAmount;
-            randomPoint.y = originalPosition.y; // Keep Y position constant
-            transform.position = randomPoint;
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            dialogueRunner.StartDialogue("DoorLocked");
         }
-
-        transform.position = originalPosition;
+      
     }
+
+   
 
     // Public methods for GameManager
     public void SetLocked(bool locked)

@@ -8,28 +8,23 @@ public class SoundManager : MonoBehaviour
     
     [Header("Audio Sources")]
     [SerializeField] private AudioSource sfxSource;
-    [SerializeField] private AudioSource ambientSource;
-    [SerializeField] private AudioSource uiSource;
-    
-    [Header("Sound Effects")]
-    [SerializeField] private AudioClip[] footstepSounds;
-    [SerializeField] private AudioClip doorOpenSound;
-    [SerializeField] private AudioClip doorCloseSound;
-    [SerializeField] private AudioClip objectInteractSound;
-    [SerializeField] private AudioClip paperWriteSound;
-    [SerializeField] private AudioClip buttonClickSound;
-    
-    [Header("Settings")]
-    [SerializeField] private float footstepInterval = 0.5f;
-    [SerializeField] private bool isWalking = false;
-    
-    [Header("Dialogue Audio")]
+    [SerializeField] private AudioSource footstepsSource;
+    [SerializeField] private AudioSource ConstanceSource;
     [SerializeField] private AudioSource dialogueAudioSource;
     
+    [Header("Volume Settings")]
+    [Range(0f, 1f)] [SerializeField] private float mainVolume = 1f;
+    [Range(0f, 1f)] [SerializeField] private float musicVolume = 1f;
+    [Range(0f, 1f)] [SerializeField] private float voiceVolume = 1f;
+    
+    // Base volumes for each source (set once and preserved)
+    private float sfxBaseVolume = 1f;
+    private float footstepsBaseVolume = 1f;
+    private float constanceBaseVolume = 1f;
+    private float dialogueBaseVolume = 1f;
     
     private List<AudioSource> pausedDialogueSources = new List<AudioSource>();
     
-    private Coroutine footstepCoroutine;
     private bool dialogueAudioWasPlaying = false;
     private bool voiceLineWasPlaying = false;
     
@@ -40,6 +35,12 @@ public class SoundManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Store base volumes when the object is created
+            StoreBaseVolumes();
+            
+            // Load saved volume settings
+            LoadVolumeSettings();
         }
         else
         {
@@ -47,102 +48,144 @@ public class SoundManager : MonoBehaviour
         }
     }
     
-    // General SFX methods
+    void Start()
+    {
+        // Apply loaded volumes
+        ApplyAllVolumes();
+    }
+    
+    private void StoreBaseVolumes()
+    {
+        // Store the initial volumes set in the Inspector
+        if (sfxSource != null) sfxBaseVolume = sfxSource.volume;
+        if (footstepsSource != null) footstepsBaseVolume = footstepsSource.volume;
+        if (ConstanceSource != null) constanceBaseVolume = ConstanceSource.volume;
+        if (dialogueAudioSource != null) dialogueBaseVolume = dialogueAudioSource.volume;
+    }
+    
+    // === VOLUME CONTROL METHODS ===
+    
+    public void SetMainVolume(float volume)
+    {
+        mainVolume = Mathf.Clamp01(volume);
+        ApplyAllVolumes();
+        SaveVolumeSettings();
+        Debug.Log($"Main Volume set to: {mainVolume}");
+    }
+    
+    public void SetMusicVolume(float volume)
+    {
+        musicVolume = Mathf.Clamp01(volume);
+        ApplyMusicVolumes();
+        SaveVolumeSettings();
+        Debug.Log($"Music Volume set to: {musicVolume}");
+    }
+    
+    public void SetVoiceVolume(float volume)
+    {
+        voiceVolume = Mathf.Clamp01(volume);
+        ApplyVoiceVolumes();
+        SaveVolumeSettings();
+        Debug.Log($"Voice Volume set to: {voiceVolume}");
+    }
+    
+    // === VOLUME APPLICATION METHODS ===
+    
+    private void ApplyAllVolumes()
+    {
+        ApplyMusicVolumes();
+        ApplyVoiceVolumes();
+    }
+    
+    private void ApplyMusicVolumes()
+    {
+        // Music category: ConstanceSource, sfxSource, footstepsSource
+        float finalMusicVolume = mainVolume * musicVolume;
+        
+        if (ConstanceSource != null)
+            ConstanceSource.volume = constanceBaseVolume * mainVolume;
+            
+        if (sfxSource != null)
+            sfxSource.volume = sfxBaseVolume * finalMusicVolume;
+            
+        if (footstepsSource != null)
+            footstepsSource.volume = footstepsBaseVolume * mainVolume;
+    }
+    
+    private void ApplyVoiceVolumes()
+    {
+        // Voice category: dialogueAudioSource
+        float finalVoiceVolume = mainVolume * voiceVolume;
+        
+        if (dialogueAudioSource != null)
+            dialogueAudioSource.volume = dialogueBaseVolume * finalVoiceVolume;
+    }
+    
+    // === SAVE/LOAD SETTINGS ===
+    
+    private void SaveVolumeSettings()
+    {
+        PlayerPrefs.SetFloat("MasterVolume", mainVolume);
+        PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+        PlayerPrefs.SetFloat("VoiceVolume", voiceVolume);
+        PlayerPrefs.Save();
+    }
+    
+    private void LoadVolumeSettings()
+    {
+        mainVolume = PlayerPrefs.GetFloat("MasterVolume", 0.8f);
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 0.7f);
+        voiceVolume = PlayerPrefs.GetFloat("VoiceVolume", 0.8f);
+    }
+    
+    // === GETTERS ===
+    
+    public float GetMainVolume() => mainVolume;
+    public float GetMusicVolume() => musicVolume;
+    public float GetVoiceVolume() => voiceVolume;
+    
     public void PlaySFX(AudioClip clip, float volume = 1f)
     {
         if (clip != null && sfxSource != null)
         {
+            // Volume já está aplicado pelo sistema de grupos
             sfxSource.PlayOneShot(clip, volume);
         }
     }
     
-    public void PlayUISFX(AudioClip clip, float volume = 1f)
-    {
-        if (clip != null && uiSource != null)
-        {
-            uiSource.PlayOneShot(clip, volume);
-        }
-    }
+    // === LEGACY VOLUME METHODS (For backward compatibility) ===
     
-    // Specific sound methods
-    public void PlayDoorOpen()
-    {
-        PlaySFX(doorOpenSound);
-    }
-    
-    public void PlayDoorClose()
-    {
-        PlaySFX(doorCloseSound);
-    }
-    
-    public void PlayObjectInteract()
-    {
-        PlaySFX(objectInteractSound);
-    }
-    
-    public void PlayPaperWrite()
-    {
-        PlaySFX(paperWriteSound);
-    }
-    
-    public void PlayButtonClick()
-    {
-        PlayUISFX(buttonClickSound);
-    }
-    
-    // Footstep system
-    public void StartFootsteps()
-    {
-        if (!isWalking && footstepSounds.Length > 0)
-        {
-            isWalking = true;
-            footstepCoroutine = StartCoroutine(FootstepLoop());
-        }
-    }
-    
-    public void StopFootsteps()
-    {
-        if (isWalking)
-        {
-            isWalking = false;
-            if (footstepCoroutine != null)
-            {
-                StopCoroutine(footstepCoroutine);
-                footstepCoroutine = null;
-            }
-        }
-    }
-    
-    private IEnumerator FootstepLoop()
-    {
-        while (isWalking)
-        {
-            // Play random footstep sound
-            if (footstepSounds.Length > 0)
-            {
-                AudioClip footstep = footstepSounds[Random.Range(0, footstepSounds.Length)];
-                PlaySFX(footstep, 0.7f);
-            }
-            
-            yield return new WaitForSeconds(footstepInterval);
-        }
-    }
-    
-    // Volume controls
+    [System.Obsolete("Use SetMusicVolume() instead")]
     public void SetSFXVolume(float volume)
     {
-        if (sfxSource != null) sfxSource.volume = volume;
+        SetMusicVolume(volume);
     }
     
+    [System.Obsolete("Use SetMusicVolume() instead")]
+    public void SetFootstepsVolume(float volume)
+    {
+        SetMusicVolume(volume);
+    }
+    
+    [System.Obsolete("Use SetMusicVolume() instead")]
+    public void SetConstanceVolume(float volume)
+    {
+        SetMusicVolume(volume);
+    }
+    
+    [System.Obsolete("Use SetMusicVolume() instead")]
     public void SetAmbientVolume(float volume)
     {
-        if (ambientSource != null) ambientSource.volume = volume;
+        SetMusicVolume(volume);
     }
     
+    [System.Obsolete("Use SetMusicVolume() instead")]
     public void SetUIVolume(float volume)
     {
-        if (uiSource != null) uiSource.volume = volume;
+        SetMusicVolume(volume);
     }
+    
+    // === DIALOGUE PAUSE/RESUME (unchanged) ===
     
     public void PauseDialogueAudio()
     {
@@ -154,8 +197,6 @@ public class SoundManager : MonoBehaviour
             dialogueAudioSource.Pause();
             pausedDialogueSources.Add(dialogueAudioSource);
         }
-        
-    
     }
     
     public void ResumeDialogueAudio()
@@ -170,16 +211,5 @@ public class SoundManager : MonoBehaviour
         }
         
         pausedDialogueSources.Clear();
-    }
-    
-    // Optional: Method to check if any dialogue audio is playing
-    public bool IsDialogueAudioPlaying()
-    {
-        if (dialogueAudioSource != null && dialogueAudioSource.isPlaying)
-            return true;
-            
-      
-            
-        return false;
     }
 }
