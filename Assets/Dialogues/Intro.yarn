@@ -1,5 +1,6 @@
 ﻿title: Intro
 ---
+
 Frank: She’s playing again… That piano's the only thing that still sounds alive in this house. #line:0e11e00 
 Frank: Still beautiful. Just like the first time I heard it. #line:0a5fe25 
 Frank: Wish I could remember the sound of her voice to compare... Not that she remembers mine. #line:0a61ad7 
@@ -10,12 +11,13 @@ Frank: I should— ...I don’t know. Maybe I should try... To talk to her again
 
 title: CantDoIt
 ---
+<<wait 2>>
 Frank: …No. Can’t do it. My body just… won’t. #line:02ae568 
 Frank: Heh Figures. Can’t even talk to my own wife.  #line:0465dc3 
 Frank: Why did I even try? We haven't had a real conversation in... months. #line:0b8c7fe 
 Frank: Whatever. I’ll just go to my study. Keep myself busy. Stick to the routine. #line:0d597a7 
 Frank: That’s all there is now. #line:0a8b98c 
-<<show_objective "Go to your study">>
+<<show_objective "Go to your study to draw">>
 ===
 
 title: Study
@@ -59,6 +61,7 @@ Frank: Maybe I just need to... walk around. #line:04b4450
 Frank: Find some inspiration. #line:01096a9 
 Frank: A moment, a memory. Just- Something. #line:0c8ab45 
 <<complete_study>>
+<<stand_from_chair>>
 
 <<show_objective "Explore the house and find memories">>
 ===

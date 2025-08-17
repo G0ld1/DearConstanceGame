@@ -281,6 +281,21 @@ public class ObjectiveCardUI : MonoBehaviour
         }
     }
     
+    [YarnCommand("show_memories_count")]
+    public static void ShowMemoriesCountCommand(int memoriesCount)
+    {
+        if (Instance != null)
+        {
+            string objectiveText = $"Memories Found: {memoriesCount} / 4";
+            Debug.Log($"Yarn Command: show_memories_count called with {memoriesCount}");
+            Instance.ShowObjectiveCard(objectiveText);
+        }
+        else
+        {
+            Debug.LogError("ObjectiveCardUI Instance not found!");
+        }
+    }
+    
     // === NOVOS MÉTODOS PÚBLICOS ===
     
     public void UpdateObjectiveText(string newText)

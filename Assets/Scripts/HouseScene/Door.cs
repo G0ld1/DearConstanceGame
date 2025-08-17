@@ -60,7 +60,7 @@ public class Door : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            HideInteractionPrompt();
+       
         }
     }
 
@@ -72,12 +72,20 @@ public class Door : MonoBehaviour
             return;
         }
 
+     
+
+        if (isInteractable && this.gameObject.name == "ConstanceDoor")
+        {
+            Debug.Log("è a ultima porta, a dar gaming");
+            GameManager.Instance.OnLetterDelivered();
+        }
+
         if (isLocked)
         {
             PlayLockedFeedback();
             return;
         }
-
+        
         // Toggle door state
         if (isOpen)
             CloseDoor();
@@ -153,11 +161,7 @@ public class Door : MonoBehaviour
     {
         isLocked = locked;
         
-        // Visual feedback (optional)
-        if (GetComponent<Renderer>() != null)
-        {
-            GetComponent<Renderer>().material.color = locked ? Color.red : Color.green;
-        }
+       
         
         Debug.Log($"Door {gameObject.name} is now {(locked ? "locked" : "unlocked")}");
     }
@@ -187,11 +191,6 @@ public class Door : MonoBehaviour
         Debug.Log(promptText); // Replace with UI prompt
         
         // TODO: Show UI prompt
-    }
-
-    private void HideInteractionPrompt()
-    {
-        // TODO: Hide UI prompt
     }
 
     // Optional: Auto-close after delay

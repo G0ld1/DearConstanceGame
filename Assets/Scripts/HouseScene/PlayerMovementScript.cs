@@ -36,6 +36,9 @@ public class PlayerMovementScript : MonoBehaviour
     private bool isGrounded;
     private float xRotation = 0f;
     private bool isPaused = false;
+    
+    // Movement control
+    private bool movementBlocked = false; // Nova variável
 
     // Footstep variables
     private float stepTimer = 0f;
@@ -89,17 +92,25 @@ public class PlayerMovementScript : MonoBehaviour
 
     void Update()
     {
-        // Só processa movimento se não estiver pausado
+        // Só processa se não estiver pausado
         if (!isPaused)
         {
-            Look();
-            Move();
+            Look(); // Câmera sempre funciona se não pausado
+            
+            // Movimento só se não estiver bloqueado
+            if (!movementBlocked)
+            {
+                Move();
+                HandleFootsteps();
+            }
+            else
+            {
+                // Ainda aplica gravidade mesmo com movimento bloqueado
+                ApplyGravityOnly();
+            }
 
-            // Improved ground detection
+            // Sempre verifica se está no chão
             isGrounded = IsGroundedCheck();
-
-            // Handle footsteps
-            HandleFootsteps();
         }
     }
 
@@ -108,10 +119,7 @@ public class PlayerMovementScript : MonoBehaviour
         // Movimento horizontal
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
 
-        // Improved ground detection (mova para cá)
-        isGrounded = IsGroundedCheck();
-
-        // Movimento vertical (gravidade) - só aqui
+        // Movimento vertical (gravidade)
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -121,7 +129,19 @@ public class PlayerMovementScript : MonoBehaviour
         // Combina movimento horizontal e vertical
         Vector3 totalMovement = move * moveSpeed * Time.deltaTime + velocity * Time.deltaTime;
         controller.Move(totalMovement);
+    }
     
+    private void ApplyGravityOnly()
+    {
+        // Só aplica gravidade quando movimento está bloqueado
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+        velocity.y += gravity * Time.deltaTime;
+        
+        // Move apenas pela gravidade (sem movimento horizontal)
+        controller.Move(velocity * Time.deltaTime);
     }
     
     void Look()
@@ -133,6 +153,40 @@ public class PlayerMovementScript : MonoBehaviour
         transform.Rotate(Vector3.up * lookInput.x * lookSens);
     }
 
+    // === MÉTODOS PÚBLICOS PARA CONTROLE DE MOVIMENTO ===
+
+    /// <summary>
+    /// Bloqueia o movimento do jogador (andar) mas mantém a câmera livre
+    /// </summary>
+    public void BlockMovement()
+    {
+        movementBlocked = true;
+        Debug.Log("Player movement blocked - camera still free");
+    }
+
+    /// <summary>
+    /// Desbloqueia o movimento do jogador
+    /// </summary>
+    public void UnblockMovement()
+    {
+        movementBlocked = false;
+        Debug.Log("Player movement unblocked");
+    }
+
+    /// <summary>
+    /// Define o estado de bloqueio do movimento
+    /// </summary>
+    /// <param name="blocked">True para bloquear, false para desbloquear</param>
+    public void SetMovementBlocked(bool blocked)
+    {
+        movementBlocked = blocked;
+        Debug.Log($"Player movement {(blocked ? "blocked" : "unblocked")}");
+    }
+
+    // === GETTERS ===
+
+    public bool IsMovementBlocked => movementBlocked;
+
     private void HandleFootsteps()
     {
         // Debug the movement values
@@ -142,12 +196,9 @@ public class PlayerMovementScript : MonoBehaviour
         // Check if player is moving
         bool isMoving = moveInputMagnitude > 0.1f && controllerVelocityMagnitude > minVelocityForFootsteps;
         
-     
-        
         // Only play footsteps if grounded and moving
         if (isGrounded && isMoving)
         {
-          
             stepTimer += Time.deltaTime;
             
             // Adjust step interval based on movement speed (faster = more frequent steps)
@@ -155,7 +206,6 @@ public class PlayerMovementScript : MonoBehaviour
             
             if (stepTimer >= currentStepInterval)
             {
-            
                 PlayFootstepSound();
                 stepTimer = 0f;
             }
@@ -265,25 +315,9 @@ public class PlayerMovementScript : MonoBehaviour
         
         // Teste SEM LayerMask primeiro
         bool raycastGrounded = Physics.Raycast(rayStart, rayDirection, rayDistance);
-
-      
         
         return raycastGrounded;
     }
 
-    // Melhor visualização do gizmo
-    private void OnDrawGizmosSelected()
-    {
-        if (controller != null)
-        {
-            Gizmos.color = isGrounded ? Color.green : Color.red;
-            Vector3 rayStart = transform.position;
-            Vector3 rayEnd = rayStart + Vector3.down * ((controller.height / 2) + groundCheckDistance);
-            Gizmos.DrawLine(rayStart, rayEnd);
-            Gizmos.DrawWireSphere(rayEnd, 0.1f);
-            
-            // Mostrar informações no Scene view
-            UnityEditor.Handles.Label(rayStart + Vector3.up, $"Grounded: {isGrounded}");
-        }
-    }
+
 }

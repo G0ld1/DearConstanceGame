@@ -9,38 +9,42 @@ public class LetterLogic : MonoBehaviour
 
     private bool canCloseLetter = true;
 
+    public bool CanOpenExternal = false;
+
     private void Update()
     {
+        if (CanOpenExternal == false)
+            return;
         // Handle TAB input
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            Debug.Log("=== TAB PRESSED ===");
-            
-            // If letter is already open, close it
-            if (letterPanel.activeInHierarchy)
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
-                if (canCloseLetter)
+                Debug.Log("=== TAB PRESSED ===");
+
+                // If letter is already open, close it
+                if (letterPanel.activeInHierarchy)
                 {
-                    Debug.Log("Closing letter with TAB");
-                    ToggleLetterPanel(false);
+                    if (canCloseLetter)
+                    {
+                        Debug.Log("Closing letter with TAB");
+                        ToggleLetterPanel(false);
+                    }
+                    return; // Exit early to prevent opening logic
                 }
-                return; // Exit early to prevent opening logic
+
+                // If letter is closed, try to open it
+                bool canOpen = CanOpenLetter();
+                Debug.Log($"CanOpenLetter result: {canOpen}");
+
+                if (canOpen)
+                {
+                    Debug.Log("Opening letter with TAB");
+                    ToggleLetterPanel(true);
+                }
+                else
+                {
+                    Debug.Log("Cannot open letter - blocked by CanOpenLetter()");
+                }
             }
-            
-            // If letter is closed, try to open it
-            bool canOpen = CanOpenLetter();
-            Debug.Log($"CanOpenLetter result: {canOpen}");
-            
-            if (canOpen)
-            {
-                Debug.Log("Opening letter with TAB");
-                ToggleLetterPanel(true);
-            }
-            else
-            {
-                Debug.Log("Cannot open letter - blocked by CanOpenLetter()");
-            }
-        }
 
         // Handle ESC input (only for closing)
         if (letterPanel.activeInHierarchy && canCloseLetter && Input.GetKeyDown(KeyCode.Escape))
