@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject[] collectibleObjects;
 
     [Header("Narrative System")]
+    [SerializeField] private CutsceneManager cutsceneManager;
     [SerializeField] private DialogueRunner dialogueRunner;
 
     [Header("UI")]
@@ -156,6 +157,10 @@ public class GameManager : MonoBehaviour
             case GameState.ReturningToStudy:
                 HandleReturningToStudyState();
                 break;
+            
+            case GameState.AngryLoop:
+                HandleAngryLoop();
+                break;
 
             case GameState.ExploringHouse:
                 HandleExploringHouseState();
@@ -171,23 +176,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleWakingUpState()
+    public void ResetPlayerLocation()
     {
-
-
-
-        if (Player != null && playerSpawnPoint != null)
+        
+           if (Player != null && playerSpawnPoint != null)
         {
 
             Player.transform.position = playerSpawnPoint.transform.position;
 
         }
-        else
-        {
-        }
+    }
 
-        
-        EnablePlayerControl();
+    private void HandleAngryLoop()
+    {
+        cutsceneManager.StartCutsceneSequence("Wakeup2");
+    }
+
+    private void HandleWakingUpState()
+    {
+
+
+
+        // if (Player != null && playerSpawnPoint != null)
+        // {
+
+        //     Player.transform.position = playerSpawnPoint.transform.position;
+
+        // }
+
+        cutsceneManager.StartCutsceneSequence("wake_up_sequence");
+        //EnablePlayerControl();
 
 
         CloseAllDoors();
@@ -201,18 +219,18 @@ public class GameManager : MonoBehaviour
 
 
 
-        if (dialogueRunner != null)
-        {
+        // if (dialogueRunner != null)
+        // {
 
-            dialogueRunner.StartDialogue("Intro");
-        }
-        else
-        {
-            Debug.LogError("DialogueRunner reference is NULL!");
-        }
+        //     dialogueRunner.StartDialogue("Intro");
+        // }
+        // else
+        // {
+        //     Debug.LogError("DialogueRunner reference is NULL!");
+        // }
 
 
-        UpdateObjective("Try to talk to Constance");
+        //UpdateObjective("Try to talk to Constance");
 
 
     }
@@ -222,9 +240,7 @@ public class GameManager : MonoBehaviour
         // Jogador foi para a sala da Constance
         DisableAllInteractions();
 
-        // Tocar diálogo "CantDoIt"
-        if (dialogueRunner != null)
-            dialogueRunner.StartDialogue("CantDoIt");
+        cutsceneManager.StartCutsceneSequence("CantDoIt");
 
         // Só a porta para o estúdio fica aberta
         CloseAllDoors();
@@ -240,8 +256,7 @@ public class GameManager : MonoBehaviour
         DisableAllInteractions();
 
         // Tocar diálogo do estúdio
-        if (dialogueRunner != null)
-            dialogueRunner.StartDialogue("Study");
+        cutsceneManager.StartCutsceneSequence("Study1");
 
         UpdateObjective("Listen to Frank's troubles");
     }
@@ -420,7 +435,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentState == GameState.ReturningToStudy)
         {
-            ChangeGameState(GameState.ExploringHouse);
+            ChangeGameState(GameState.AngryLoop);
         }
     }
 
@@ -450,40 +465,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Debug methods com botões no Inspector
-    [ContextMenu("Debug: Force WakingUp")]
-    public void Debug_ForceWakingUp() => ChangeGameState(GameState.WakingUp);
+    // // Debug methods com botões no Inspector
+    // [ContextMenu("Debug: Force WakingUp")]
+    // public void Debug_ForceWakingUp() => ChangeGameState(GameState.WakingUp);
 
-    [ContextMenu("Debug: Force GoingToConstance")]
-    public void Debug_ForceGoingToConstance() => ChangeGameState(GameState.GoingToConstance);
+    // [ContextMenu("Debug: Force GoingToConstance")]
+    // public void Debug_ForceGoingToConstance() => ChangeGameState(GameState.GoingToConstance);
 
-    [ContextMenu("Debug: Force ReturningToStudy")]
-    public void Debug_ForceReturningToStudy() => ChangeGameState(GameState.ReturningToStudy);
+    // [ContextMenu("Debug: Force ReturningToStudy")]
+    // public void Debug_ForceReturningToStudy() => ChangeGameState(GameState.ReturningToStudy);
 
-    [ContextMenu("Debug: Force ExploringHouse")]
-    public void Debug_ForceExploringHouse() => ChangeGameState(GameState.ExploringHouse);
+    // [ContextMenu("Debug: Force ExploringHouse")]
+    // public void Debug_ForceExploringHouse() => ChangeGameState(GameState.ExploringHouse);
 
-    [ContextMenu("Debug: Force DeliveringLetter")]
-    public void Debug_ForceDeliveringLetter() => ChangeGameState(GameState.DeliveringLetter);
+    // [ContextMenu("Debug: Force DeliveringLetter")]
+    // public void Debug_ForceDeliveringLetter() => ChangeGameState(GameState.DeliveringLetter);
 
-    [ContextMenu("Debug: Force GameEnded")]
-    public void Debug_ForceGameEnded() => ChangeGameState(GameState.GameEnded);
+    // [ContextMenu("Debug: Force GameEnded")]
+    // public void Debug_ForceGameEnded() => ChangeGameState(GameState.GameEnded);
 
-    [ContextMenu("Debug: Add Random Memory")]
-    public void Debug_AddRandomMemory()
-    {
-        string randomMemory = $"DebugMemory_{UnityEngine.Random.Range(1000, 9999)}";
-        OnObjectFound(randomMemory);
-    }
+    // [ContextMenu("Debug: Add Random Memory")]
+    // public void Debug_AddRandomMemory()
+    // {
+    //     string randomMemory = $"DebugMemory_{UnityEngine.Random.Range(1000, 9999)}";
+    //     OnObjectFound(randomMemory);
+    // }
 
-    [ContextMenu("Debug: Complete All Memories")]
-    public void Debug_CompleteAllMemories()
-    {
-        for (int i = foundObjects.Count; i < totalObjectsToFind; i++)
-        {
-            OnObjectFound($"DebugMemory_{i}");
-        }
-    }
+    // [ContextMenu("Debug: Complete All Memories")]
+    // public void Debug_CompleteAllMemories()
+    // {
+    //     for (int i = foundObjects.Count; i < totalObjectsToFind; i++)
+    //     {
+    //         OnObjectFound($"DebugMemory_{i}");
+    //     }
+    // }
 
     // Getters
     public GameState GetCurrentState() => currentState;
@@ -502,7 +517,8 @@ public enum GameState
     None,
     WakingUp,           
     GoingToConstance,   
-    ReturningToStudy,   
+    ReturningToStudy,
+    AngryLoop,   
     ExploringHouse,    
     DeliveringLetter,   
     GameEnded           

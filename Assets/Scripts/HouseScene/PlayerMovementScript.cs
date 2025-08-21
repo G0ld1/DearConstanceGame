@@ -1,5 +1,6 @@
 using System.Numerics;
 using UnityEngine;
+using Unity.Cinemachine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -24,8 +25,11 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField] private float groundCheckDistance = 0.3f; // Aumentei para 0.3f
     [SerializeField] private LayerMask groundLayerMask = 1; // Layer do chão
 
+    [Header("Cutscene Control")]
+    [SerializeField] private CutsceneManager cutsceneManager;
+
     private CharacterController controller;
-    private Camera cam;
+    [SerializeField] private CinemachineCamera cam;
     private Vector2 moveInput;
     private Vector2 lookInput;
     
@@ -38,8 +42,9 @@ public class PlayerMovementScript : MonoBehaviour
     private bool isPaused = false;
     
     // Movement control
-    private bool movementBlocked = false; // Nova variável
-
+    private bool movementBlocked = false;
+    private bool cameraBlocked = false; // Nova variável para controle da câmera
+    
     // Footstep variables
     private float stepTimer = 0f;
     private bool wasMovingLastFrame = false;
@@ -74,7 +79,7 @@ public class PlayerMovementScript : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        cam = GetComponentInChildren<Camera>();
+      
         
         // Setup footstep audio source
         if (footstepAudioSource == null)
@@ -92,10 +97,17 @@ public class PlayerMovementScript : MonoBehaviour
 
     void Update()
     {
-        // Só processa se não estiver pausado
-        if (!isPaused)
+        // Verifica se há cutscene ativa antes de processar inputs
+        bool isCutsceneActive = cutsceneManager != null && cutsceneManager.IsCutscenePlaying;
+        
+        // Só processa se não estiver pausado E não houver cutscene
+        if (!isPaused && !isCutsceneActive)
         {
-            Look(); // Câmera sempre funciona se não pausado
+            // Câmera só funciona se não estiver bloqueada
+            if (!cameraBlocked)
+            {
+                Look();
+            }
             
             // Movimento só se não estiver bloqueado
             if (!movementBlocked)
@@ -112,8 +124,17 @@ public class PlayerMovementScript : MonoBehaviour
             // Sempre verifica se está no chão
             isGrounded = IsGroundedCheck();
         }
+        else if (!isCutsceneActive) // Se pausado mas sem cutscene, ainda aplica gravidade
+        {
+            isGrounded = IsGroundedCheck();
+            if (!movementBlocked)
+            {
+                ApplyGravityOnly();
+            }
+        }
+        // Se houver cutscene ativa, não faz nada (Timeline controla tudo)
     }
-
+    
     void Move()
     {
         // Movimento horizontal
@@ -161,7 +182,7 @@ public class PlayerMovementScript : MonoBehaviour
     public void BlockMovement()
     {
         movementBlocked = true;
-        Debug.Log("Player movement blocked - camera still free");
+        Debug.Log("Player movement blocked");
     }
 
     /// <summary>
@@ -174,19 +195,83 @@ public class PlayerMovementScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Bloqueia o controle da câmera
+    /// </summary>
+    public void BlockCamera()
+    {
+        cameraBlocked = true;
+        Debug.Log("Camera control blocked");
+    }
+
+    /// <summary>
+    /// Desbloqueia o controle da câmera
+    /// </summary>
+    public void UnblockCamera()
+    {
+        cameraBlocked = false;
+        Debug.Log("Camera control unblocked");
+    }
+
+    /// <summary>
     /// Define o estado de bloqueio do movimento
     /// </summary>
     /// <param name="blocked">True para bloquear, false para desbloquear</param>
     public void SetMovementBlocked(bool blocked)
     {
         movementBlocked = blocked;
-        Debug.Log($"Player movement {(blocked ? "blocked" : "unblocked")}");
+        Debug.Log($"Movement blocked: {blocked}");
+    }
+
+    /// <summary>
+    /// Define o estado de bloqueio da câmera
+    /// </summary>
+    /// <param name="blocked">True para bloquear, false para desbloquear</param>
+    public void SetCameraBlocked(bool blocked)
+    {
+        cameraBlocked = blocked;
+        Debug.Log($"Camera blocked: {blocked}");
+    }
+
+    /// <summary>
+    /// Controla movimento e câmera juntos
+    /// </summary>
+    /// <param name="allowMovement">Permite movimento</param>
+    /// <param name="allowCamera">Permite controle da câmera</param>
+    public void SetPlayerControl(bool allowMovement, bool allowCamera = true)
+    {
+        SetMovementBlocked(!allowMovement);
+        SetCameraBlocked(!allowCamera);
+    }
+
+    /// <summary>
+    /// Reseta a rotação da câmera baseado na rotação atual (para usar após cutscenes)
+    /// </summary>
+    public void ResetCameraRotation()
+    {
+        // Recalcula o xRotation baseado na rotação atual da câmera
+        Vector3 eulerAngles = cam.transform.localEulerAngles;
+        
+        // Converte o ângulo para o range correto (-90 a 90)
+        if (eulerAngles.x > 180f)
+        {
+            xRotation = eulerAngles.x - 360f;
+        }
+        else
+        {
+            xRotation = eulerAngles.x;
+        }
+        
+        // Clamp para evitar problemas
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        
+        Debug.Log($"Camera rotation reset - xRotation: {xRotation}");
     }
 
     // === GETTERS ===
 
     public bool IsMovementBlocked => movementBlocked;
-
+    public bool IsCameraBlocked => cameraBlocked;
+    
     private void HandleFootsteps()
     {
         // Debug the movement values

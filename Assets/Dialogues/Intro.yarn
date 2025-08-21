@@ -1,22 +1,20 @@
 ﻿title: Intro
 ---
 
-Frank: She’s playing again… That piano's the only thing that still sounds alive in this house. #line:0e11e00 
-Frank: Still beautiful. Just like the first time I heard it. #line:0a5fe25 
-Frank: Wish I could remember the sound of her voice to compare... Not that she remembers mine. #line:0a61ad7 
-Frank: I should— ...I don’t know. Maybe I should try... To talk to her again.  #line:0f17231 
+Frank: *sigh*... Good morning to you too.
 
 <<show_objective "Try to talk to Constance">>
 ===
 
+title: ComeOn
+---
+Frank: Go talk to her, come on, it's... just your wife.
+
+===
+
 title: CantDoIt
 ---
-<<wait 2>>
-Frank: …No. Can’t do it. My body just… won’t. #line:02ae568 
-Frank: Heh Figures. Can’t even talk to my own wife.  #line:0465dc3 
-Frank: Why did I even try? We haven't had a real conversation in... months. #line:0b8c7fe 
-Frank: Whatever. I’ll just go to my study. Keep myself busy. Stick to the routine. #line:0d597a7 
-Frank: That’s all there is now. #line:0a8b98c 
+Frank: yeah, right.
 <<show_objective "Go to your study to draw">>
 ===
 

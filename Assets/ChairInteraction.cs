@@ -25,6 +25,7 @@ public class ChairInteraction : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private CameraWallAvoidance annoyingscript;
     
+    
     private bool playerInRange = false;
     private bool playerSitting = false;
     private bool audioPlaying = false;
@@ -99,26 +100,26 @@ public class ChairInteraction : MonoBehaviour
     public void SitDown()
     {
         if (playerSitting || audioPlaying || chairRotating) return;
-        
+
         // Guarda posições originais
         originalPlayerPosition = playerMovement.transform.position;
         originalPlayerRotation = playerMovement.transform.rotation;
         originalCameraPosition = playerCamera.transform.localPosition;
         originalCameraRotation = playerCamera.transform.localRotation;
         originalCameraParent = playerCamera.transform.parent;
-        
+
         annoyingscript.enabled = false;
-        
+
         // Bloqueia movimento do jogador
         playerMovement.BlockMovement();
-        
+
         CharacterController controller = playerMovement.GetComponent<CharacterController>();
         controller.enabled = false;
-        
+
         // Move o jogador
         playerMovement.transform.position = sittingPosition.position;
         playerMovement.transform.rotation = sittingPosition.rotation;
-        
+
         controller.enabled = true;
         playerSitting = true;
 
@@ -130,6 +131,8 @@ public class ChairInteraction : MonoBehaviour
 
         // Inicia a rotação da cadeira
         StartCoroutine(RotateChairSequence());
+        
+        GameManager.Instance.OnReachedStudy();
     }
     
     private IEnumerator RotateChairSequence()
@@ -178,9 +181,9 @@ public class ChairInteraction : MonoBehaviour
         {
             interactionPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = "Playing audio...";
         }
-        
+                
         // Agora inicia o áudio
-        StartCoroutine(PlayAudioAndWait());
+        //StartCoroutine(PlayAudioAndWait());
     }
     
     private IEnumerator PlayAudioAndWait()
@@ -200,7 +203,7 @@ public class ChairInteraction : MonoBehaviour
         
         audioPlaying = false;
         Debug.Log("Audio finished - ready for next actions");
-        GameManager.Instance.OnReachedStudy();
+
     }
 
     public void StandUp()

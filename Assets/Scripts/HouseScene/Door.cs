@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Yarn.Unity;
 
@@ -15,6 +16,7 @@ public class Door : MonoBehaviour
 
        [Header("Narrative System")]
     [SerializeField] private DialogueRunner dialogueRunner;
+    [SerializeField] private string DialogueName;
     
     [Header("Audio")]
     [SerializeField] private AudioClip openSound;
@@ -72,13 +74,18 @@ public class Door : MonoBehaviour
             return;
         }
 
+        if (DialogueName != String.Empty && isInteractable)
+        {
+            dialogueRunner.StartDialogue(DialogueName);
+        }
+
      
 
         if (isInteractable && this.gameObject.name == "ConstanceDoor")
-        {
-            Debug.Log("è a ultima porta, a dar gaming");
-            GameManager.Instance.OnLetterDelivered();
-        }
+            {
+                Debug.Log("è a ultima porta, a dar gaming");
+                GameManager.Instance.OnLetterDelivered();
+            }
 
         if (isLocked)
         {
