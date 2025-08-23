@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
         
            if (Player != null && playerSpawnPoint != null)
         {
+            Debug.Log("Called reset player pos");
 
             Player.transform.position = playerSpawnPoint.transform.position;
 
@@ -189,7 +190,7 @@ public class GameManager : MonoBehaviour
 
     private void HandleAngryLoop()
     {
-        cutsceneManager.StartCutsceneSequence("Wakeup2");
+       // cutsceneManager.StartCutsceneSequence("Wakeup2");
     }
 
     private void HandleWakingUpState()

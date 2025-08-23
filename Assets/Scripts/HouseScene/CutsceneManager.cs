@@ -251,7 +251,7 @@ public class CutsceneManager : MonoBehaviour
             cameraManager.DeactivateCurrentCutsceneCamera();
         }
         
-        RestoreCameraState();
+        //RestoreCameraState();
         
         OnCutsceneEnded?.Invoke(currentSequence.sequenceId);
         Debug.Log($"Cutscene sequence '{currentSequence.sequenceId}' completed!");

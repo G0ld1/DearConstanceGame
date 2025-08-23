@@ -68,10 +68,7 @@ public class ChairInteraction : MonoBehaviour
         {
             SitDown();
         }
-        else if (playerSitting && !audioPlaying && !chairRotating && Input.GetKeyDown(KeyCode.E))
-        {
-            StandUp();
-        }
+        
     }
     
     private void OnTriggerEnter(Collider other)
@@ -92,8 +89,7 @@ public class ChairInteraction : MonoBehaviour
             if (interactionPrompt != null)
                 interactionPrompt.SetActive(false);
                 
-            if (playerSitting && !audioPlaying && !chairRotating)
-                StandUp();
+          
         }
     }
 
@@ -132,7 +128,7 @@ public class ChairInteraction : MonoBehaviour
         // Inicia a rotação da cadeira
         StartCoroutine(RotateChairSequence());
         
-        GameManager.Instance.OnReachedStudy();
+        
     }
     
     private IEnumerator RotateChairSequence()
@@ -154,15 +150,7 @@ public class ChairInteraction : MonoBehaviour
             
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, curveValue);
             
-            // Se o jogador estiver sentado, roda ele junto com a cadeira
-            if (playerSitting)
-            {
-                playerMovement.transform.rotation = Quaternion.Lerp(
-                    originalPlayerRotation, 
-                    originalPlayerRotation * Quaternion.Euler(0, rotationDegrees, 0), 
-                    curveValue
-                );
-            }
+           
             
             yield return null;
         }
@@ -182,8 +170,7 @@ public class ChairInteraction : MonoBehaviour
             interactionPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = "Playing audio...";
         }
                 
-        // Agora inicia o áudio
-        //StartCoroutine(PlayAudioAndWait());
+       GameManager.Instance.OnReachedStudy();
     }
     
     private IEnumerator PlayAudioAndWait()
@@ -206,73 +193,10 @@ public class ChairInteraction : MonoBehaviour
 
     }
 
-    public void StandUp()
-    {
-        if (!playerSitting || audioPlaying || chairRotating) return;
-
-        StartCoroutine(StandUpSequence());
-    }
     
-    private IEnumerator StandUpSequence()
-    {
-        chairRotating = true;
-        
-        // Roda a cadeira de volta à posição original
-        Quaternion startRotation = transform.rotation;
-        float elapsed = 0f;
-        
-        while (elapsed < rotationDuration)
-        {
-            elapsed += Time.deltaTime;
-            float progress = elapsed / rotationDuration;
-            float curveValue = rotationCurve.Evaluate(progress);
-            
-            transform.rotation = Quaternion.Lerp(startRotation, originalChairRotation, curveValue);
-            yield return null;
-        }
-        
-        transform.rotation = originalChairRotation;
-        chairRotating = false;
-        
-        // Depois move o jogador de volta
-        playerMovement.UnblockMovement();
-        
-        CharacterController controller = playerMovement.GetComponent<CharacterController>();
-        controller.enabled = false;
-        
-        playerMovement.transform.position = originalPlayerPosition;
-        playerMovement.transform.rotation = originalPlayerRotation;
-        
-        controller.enabled = true;
-
-        // Restaura câmera
-        if (originalCameraParent != null)
-        {
-            playerCamera.transform.SetParent(originalCameraParent);
-            playerCamera.transform.localPosition = originalCameraPosition;
-            playerCamera.transform.localRotation = originalCameraRotation;
-        }
-
-        playerSitting = false;
-
-        // Atualiza UI
-        if (interactionPrompt != null && playerInRange)
-        {
-            interactionPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = "Press E to sit";
-        }
-
-        Debug.Log("Player stood up");
-        annoyingscript.enabled = true;
-    }
+   
     
-    [YarnCommand("stand_from_chair")]
-    public static void StandFromYarn()
-    {
-        if (Instance != null && Instance.playerSitting && !Instance.audioPlaying && !Instance.chairRotating)
-        {
-            Instance.StandUp();
-        }
-    }
+   
     
     // Getters
     public bool IsPlayerSitting => playerSitting;
